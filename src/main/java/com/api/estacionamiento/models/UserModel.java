@@ -1,11 +1,13 @@
 package com.api.estacionamiento.models;
 
+import com.api.estacionamiento.enums.RoleName;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -21,29 +23,18 @@ public class UserModel implements UserDetails, Serializable {
   private String username;
   @Column(nullable = false)
   private String password;
+  @ManyToMany
+  @JoinTable( name = "TB_USERS_ROLES",
+          joinColumns = @JoinColumn(name = "user_id"),
+          inverseJoinColumns = @JoinColumn(name = "role_id"))
+  private List<RoleModel> roles;
 
-  //Getters and Setters
-  public UUID getUserId() {
-    return userId;
-  }
-
-  public void setUserId(UUID userId) {
-    this.userId = userId;
-  }
-
-  public void setUsername(String username) {
-    this.username = username;
-  }
-
-  public void setPassword(String password) {
-    this.password = password;
-  }
 
   //Method of UserDetails
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return null;
+    return this.roles;
   }
 
   @Override
@@ -75,4 +66,22 @@ public class UserModel implements UserDetails, Serializable {
   public boolean isEnabled() {
     return true;
   }
+
+  //Getters and Setters
+  public UUID getUserId() {
+    return userId;
+  }
+
+  public void setUserId(UUID userId) {
+    this.userId = userId;
+  }
+
+  public void setUsername(String username) {
+    this.username = username;
+  }
+
+  public void setPassword(String password) {
+    this.password = password;
+  }
+
 }
